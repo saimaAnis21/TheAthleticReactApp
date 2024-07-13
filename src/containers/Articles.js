@@ -1,7 +1,9 @@
-import React from 'react'
+import React from "react";
 import { gql } from "apollo-boost";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
+import { find, includes, forEach } from "lodash";
+
 
 const GET_ARTICLES = gql`
   query Articles {
@@ -34,7 +36,7 @@ const ImgWrapper = styled.div`
   flex: 0 0 64px;
   @media (min-width: 768px){
   width:100%;
-  height:60%;
+  min-height:60%;
   }
 `;
 const CardText = styled.div`
@@ -87,34 +89,38 @@ const Title = styled.span`
     font-size: 1rem;
   }
 `;
-export default function Articles() {
+export default function Articles({followedTeams:teamIds, followedLeagues:leagueIds}) {
   const { data, loading } = useQuery(GET_ARTICLES);
-  const teamIds = ["1D77739F-CF57-4235-B901-9BC17ECD65B7", "1D77739F-CF57-4235-B901-9BC17ECD65B7","1D77739F-CF57-4235-B901-9BC17ECD65B7" ];
-  const leagueIds = [
-    "8D59D789-49A3-43F0-86B5-23166ACBDC15",
-    "8D59D789-49A3-43F0-86B5-23166ACBDC15",
-    "8D59D789-49A3-43F0-86B5-23166ACBDC15",
-  ];
   
-  if(loading) <div>Loading....</div>
-  return (
-    <>
-      <h1>News Feed</h1>
-      <Container>
-        {data?.articles.map((article) => (
-          <Card key={article.id}>
-            <ImgWrapper>
-              <Img src={article.imageUrlString} />
-            </ImgWrapper>
-            <CardText>
-              <Title>{article.title}</Title>
-              <span className="author">
-                {article.author.name} | {article.createdAt.split("T")[0]}
-              </span>
-            </CardText>
-          </Card>
-        ))}
-      </Container>
-    </>
-  );
+  const allIds = [...teamIds, ...leagueIds];
+  const allTeamids = teamIds.map(i => i.id)
+  const allLeagueids = leagueIds.map((i) => i.id);
+  const articles = []
+  forEach(data?.articles, (item) => {
+    if (includes(allTeamids, item.team.id) || includes(allLeagueids, item.league.id)) { articles.push(item); }
+  });
+  if (loading) <div>Loading....</div>
+  
+    return (
+      <>
+        <h1>News Feed</h1>
+        <Container>
+          {articles.map((article) => (
+            <Card key={article.id}>
+              <ImgWrapper>
+                <Img src={article.imageUrlString} />
+              </ImgWrapper>
+              <CardText>
+                <Title>{article.title}</Title>
+                <span className="author">
+                  {article.author.name} | {article.createdAt.split("T")[0]}
+                </span>
+              </CardText>
+            </Card>
+          ))}
+        </Container>
+      </>
+    );
 }
+
+  

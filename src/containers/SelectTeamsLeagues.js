@@ -1,6 +1,6 @@
 import { gql } from "apollo-boost";
 import { useQuery } from "@apollo/react-hooks";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styled from "styled-components";
 import ListDisplay from "../components/ListDisplay";
 
@@ -57,15 +57,18 @@ margin-top:15px;
 `
 const TeamListDisplay = (props) => <ListDisplay {...props} />
 const LeagueListDisplay = (props) => <ListDisplay {...props} />
-export default function SelectTeamsLeagues() {
+export default function SelectTeamsLeagues({
+  setFollowedLeagues,
+  setFollowedTeams,
+  followedTeams,
+  followedLeagues,
+}) {
   const { data: teamData, loading: teamLoading } = useQuery(GET_TEAMS);
   const { data: leagueData, loading: leagueLoading } = useQuery(GET_LEAGUES);
   const data = { ...teamData, ...leagueData };
 
   const [selectedOpt, setSelectedOpt] = useState("leagues");
-  const [followedTeams, setFollowedTeams] = useState([]);
-  const [followedLeagues, setFollowedLeagues] = useState([])
-  
+
   const ListDisplayComps = {
     teams: (
       <TeamListDisplay
@@ -83,7 +86,7 @@ export default function SelectTeamsLeagues() {
     ),
   };
   const ListDisplayComp = ListDisplayComps[selectedOpt];
-  
+
   return (
     <div>
       <h1>Select Your Teams and Leagues</h1>

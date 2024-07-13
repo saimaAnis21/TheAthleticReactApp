@@ -1,7 +1,7 @@
 import './App.css';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
-import React from 'react';
+import React, { useState } from "react";
 import SelectTeamsLeagues from "./containers/SelectTeamsLeagues";
 import Header from './components/header';
 import { Routes, Route, Outlet } from "react-router-dom";
@@ -18,15 +18,30 @@ const Layout = () => (
   </>
 );
 
-const About = () => <div style={{backgroundColor:'red'}}>About US</div>
 function App() {
+  const [followedTeams, setFollowedTeams] = useState([]);
+  const [followedLeagues, setFollowedLeagues] = useState([]);
   return (
     <ApolloProvider client={client}>
       <div className="App">
         <Routes>
           <Route path="/" element={<Layout />}>
-            {/* <Route exact path="/" element={<SelectTeamsLeagues />} /> */}
-            <Route path="/" element={<Articles />}/>
+            <Route
+              exact
+              path="/"
+              element={
+                <SelectTeamsLeagues
+                  setFollowedTeams={setFollowedTeams}
+                  setFollowedLeagues={setFollowedLeagues}
+                  followedTeams={followedTeams}
+                  followedLeagues={followedLeagues}
+                />
+              }
+            />
+            <Route
+              path="/articles"
+              element={<Articles followedTeams={followedTeams} followedLeagues={followedLeagues} />}
+            />
           </Route>
         </Routes>
       </div>
