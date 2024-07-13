@@ -1,32 +1,40 @@
 import React from 'react';
 import styled from 'styled-components';
 import { remove, find } from 'lodash';
+import { FaMinus, FaPlus } from "react-icons/fa";
 
 const Container = styled.div`
-  display:flex;
+  display: flex;
   flex-direction: column;
-  align-items:flex-start;
-  height: 500px;
-  width: 200px;
-  margin: auto;
-  overflow-y:scroll;
-  border: 2px solid red;
+  align-items: flex-start;
+  height: 400px;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+}
 `;
-const ItemBtn = styled.button`
-border: none;
-color: blue;
-background: #fff;
-font-size: 1rem;
-margin-top:10px;
-`
+const ItemBtn = styled.div`
+  ${(props) => props.selected && "color:grey;"};
+  font-weight: ${(props) => (props.selected ? "lighter" : "bold")};
+  background: #fff;
+  font-size: 1rem;
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items:center;
+  width: -webkit-fill-available;
+`;
 const Wrapper = styled.div`
-display:flex;
-`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+`;
 
 export default function ListDisplay({ list, setFollowedList, followedList }) {
   
   if (list.length === 0) return null;
-  console.log("followedList", followedList);
+  
   const addListItem = (id, name) => {
     const itemExists = find(followedList, i => i.id === id)
     if (!itemExists) {
@@ -45,8 +53,12 @@ export default function ListDisplay({ list, setFollowedList, followedList }) {
     <Wrapper>
       <Container>
         {list.map((item) => (
-          <ItemBtn key={item.id} onClick={() => addListItem(item.id, item.name)}>
+          <ItemBtn
+            selected={find(followedList, (i) => i.id === item.id)}
+            key={item.id}
+            onClick={() => addListItem(item.id, item.name)}>
             {item.name}
+            <FaPlus />
           </ItemBtn>
         ))}
       </Container>
@@ -54,6 +66,7 @@ export default function ListDisplay({ list, setFollowedList, followedList }) {
         {followedList.map((item) => (
           <ItemBtn key={item.id} onClick={() => removeListItem(item.id)}>
             {item.name}
+            <FaMinus />
           </ItemBtn>
         ))}
       </Container>
