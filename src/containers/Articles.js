@@ -99,11 +99,7 @@ export default function Articles({followedTeams:teamIds, followedLeagues:leagueI
   forEach(data?.articles, (item) => {
     if (includes(allTeamids, item.team.id) || includes(allLeagueids, item.league.id)) { articles.push(item); }
   });
-  articles.sort((a, b) => {
-    const dateA = new Date(a.createdAt);
-    const dateB = new Date(b.createdAt);
-   return dateB - dateA ;
-  })
+
   if (loading) <div>Loading....</div>
   
     return (

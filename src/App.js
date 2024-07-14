@@ -1,6 +1,6 @@
 import './App.css';
 import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider, InMemoryCache } from "@apollo/react-hooks";
 import React, { useState } from "react";
 import SelectTeamsLeagues from "./containers/SelectTeamsLeagues";
 import Header from './components/header';
@@ -8,7 +8,8 @@ import { Routes, Route, Outlet } from "react-router-dom";
 import Articles from './containers/Articles';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql/',
+  uri: "http://localhost:4000/graphql/",
+  cache: new InMemoryCache(),
 });
 
 const Layout = () => (
