@@ -1,25 +1,22 @@
-import React from "react";
+import React, {useState} from "react";
 import { gql } from "apollo-boost";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
-import { find, includes, forEach } from "lodash";
 
-
-const GET_ARTICLES = gql`
-  query Articles {
-    articles {
-      id
-      imageUrlString
-      createdAt
-      title
-      team {
+const GET_PAGE_ARTICLES = gql`
+  query PageArticles($offset: Int, $limit: Int, $teamIds: [String!], $leagueIds: [String!]) {
+    pageArticles(offset: $offset, limit: $limit, teamIds: $teamIds, leagueIds: $leagueIds) {
+      article {
         id
+        title
+        imageUrlString
+        createdAt
+        author {
+          name
+        }
       }
-      league {
-        id
-      }
-      author {
-        name
+      pageInfo {
+        hasNextPage
       }
     }
   }
@@ -61,13 +58,8 @@ const Card = styled.div`
   border: 1px solid gray;
   @media (min-width: 768px) {
     flex-direction: column;
-    flex: 1 0 40%;
-    width: 344px;
+    max-width: 344px;
     height: 289px;
-  }
-  @media (min-width: 1024px) {
-    width: 100px;
-    flex: 1 0 20%;
   }
 `;
 const Container = styled.div`
@@ -77,8 +69,8 @@ const Container = styled.div`
     flex-direction: row;
     flex-wrap:wrap;
   }
-  margin-left: 10px;
-  margin-right: 10px;
+  justify-content:center;
+  margin:10px;
 `;
 
 const Title = styled.span`
@@ -89,39 +81,75 @@ const Title = styled.span`
     font-size: 1rem;
   }
 `;
-export default function Articles({followedTeams:teamIds, followedLeagues:leagueIds}) {
-  const { data, loading } = useQuery(GET_ARTICLES);
-  
-  const allIds = [...teamIds, ...leagueIds];
-  const allTeamids = teamIds.map(i => i.id)
-  const allLeagueids = leagueIds.map((i) => i.id);
-  const articles = []
-  forEach(data?.articles, (item) => {
-    if (includes(allTeamids, item.team.id) || includes(allLeagueids, item.league.id)) { articles.push(item); }
-  });
+const PrevNextBtn = styled.button`
+border:none;
+background:#fff;
+font-size:1.4rem;
+font-weight:bold;
+cursor:pointer;
+`
+const PrevNextWrapper = styled.div`
+  display: flex;
+  justify-content:center;
+  gap:20px;
+`;
 
-  if (loading) <div>Loading....</div>
+const Msg = styled.div`
+  font-size: 2rem;
+  font-weight: bolder;
+`;
+const ArticleDisplay = ({ articles, error }) => {
+  if (error) return <Msg>Sorry no articles</Msg>;
+  return (
+    <Container>
+      {articles.map((article) => (
+        <Card key={article.id}>
+          <ImgWrapper>
+            <Img src={article.imageUrlString} />
+          </ImgWrapper>
+          <CardText>
+            <Title>{article.title}</Title>
+            <span className="author">
+              {article.author.name} | {article.createdAt.split("T")[0]}
+            </span>
+          </CardText>
+        </Card>
+      ))}
+    </Container>
+  );
+};
+export default function Articles({followedTeams, followedLeagues}) {
+  const [pageNo, setPageNo] = useState(0);
+  const PAGE_SIZE = 10;
+  const teamIds = followedTeams.map((i) => i.id);
+  const leagueIds = followedLeagues.map((i) => i.id);
+  const { data, loading, error } = useQuery(GET_PAGE_ARTICLES, {
+    variables: {
+      offset: pageNo*PAGE_SIZE,
+      limit: PAGE_SIZE,
+      teamIds,
+      leagueIds,
+    },
+  });
+  const hasNextPage = data?.pageArticles.pageInfo.hasNextPage;
+  const articles = data?.pageArticles.article || [];
   
     return (
       <>
         <h1>News Feed</h1>
-        <Container>
-          {articles.map((article) => (
-            <Card key={article.id}>
-              <ImgWrapper>
-                <Img src={article.imageUrlString} />
-              </ImgWrapper>
-              <CardText>
-                <Title>{article.title}</Title>
-                <span className="author">
-                  {article.author.name} | {article.createdAt.split("T")[0]}
-                </span>
-              </CardText>
-            </Card>
-          ))}
-        </Container>
+        <PrevNextWrapper>
+          <PrevNextBtn disabled={pageNo === 0} onClick={() => setPageNo((prev) => (prev -= 1))}>
+            {"<"}
+          </PrevNextBtn>
+          <PrevNextBtn disabled={!hasNextPage} onClick={() => setPageNo((prev) => (prev += 1))}>
+            {">"}
+          </PrevNextBtn>
+        </PrevNextWrapper>
+        {loading ? (
+          <Msg>...Loading Articles</Msg>
+        ) : (
+          <ArticleDisplay articles={articles} error={error || articles.length === 0} />
+        )}
       </>
     );
 }
-
-  
