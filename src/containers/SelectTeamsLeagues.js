@@ -33,28 +33,39 @@ const SelectBtn = styled.button`
   background: white;
   margin-right: 40px;
   cursor: pointer;
-`;
-const UpperRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-   * {
-    font-size: 1rem;
-    font-weight: bold;
-  }
-  & .followed { 
-    text-transform: capitalize;
-  }
+  font-size: 1.5rem;
+  font-weight: bolder;
 `;
 
+
 const Container = styled.div`
-display: flex;
-flex-direction: column;
-width:50%;
-margin: auto;
-margin-top:15px;
-`
+  display: flex;
+  justify-content:center;
+  gap:100px;
+  margin: auto;
+  margin-top: 15px;
+`;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width:40%;
+  .followed{
+  font-size:1.5rem;
+  font-weight:bolder;
+  }
+`;
+const WrapperHeader = styled.div`
+  display: flex;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  height:40px;
+  gap:20px;
+`;
+const WrapperBody = styled.div`
+  display:flex;
+  flex-direction:column;
+`;
 const TeamListDisplay = (props) => <ListDisplay {...props} />
 const LeagueListDisplay = (props) => <ListDisplay {...props} />
 export default function SelectTeamsLeagues({
@@ -70,29 +81,32 @@ export default function SelectTeamsLeagues({
   const [selectedOpt, setSelectedOpt] = useState("leagues");
 
   const ListDisplayComps = {
-    teams: (
+    teams: ((props)=>
       <TeamListDisplay
         list={data?.[selectedOpt] || []}
         setFollowedList={setFollowedTeams}
         followedList={followedTeams}
+        {...props}
       />
     ),
-    leagues: (
+    leagues: ((props)=>
       <LeagueListDisplay
         list={data?.[selectedOpt] || []}
         setFollowedList={setFollowedLeagues}
         followedList={followedLeagues}
+        {...props}
       />
     ),
   };
+  
   const ListDisplayComp = ListDisplayComps[selectedOpt];
 
   return (
-    <div>
+    <>
       <h1>Select Your Teams and Leagues</h1>
       <Container>
-        <UpperRow>
-          <div>
+        <Wrapper>
+          <WrapperHeader>
             <SelectBtn selected={selectedOpt === "teams"} onClick={() => setSelectedOpt("teams")}>
               Teams
             </SelectBtn>
@@ -101,12 +115,18 @@ export default function SelectTeamsLeagues({
               onClick={() => setSelectedOpt("leagues")}>
               Leagues
             </SelectBtn>
-          </div>
-          <div className="followed">{selectedOpt} you follow:</div>
-        </UpperRow>
-
-        {teamLoading || leagueLoading ? <p>Loading</p> : ListDisplayComp}
+          </WrapperHeader>
+          <WrapperBody>
+            <ListDisplayComp add={true} />
+          </WrapperBody>
+        </Wrapper>
+        <Wrapper>
+          <WrapperHeader className="followed">{selectedOpt} you follow:</WrapperHeader>
+          <WrapperBody>
+            <ListDisplayComp add={false} />
+          </WrapperBody>
+        </Wrapper>
       </Container>
-    </div>
+    </>
   );
 }

@@ -25,51 +25,52 @@ const ItemBtn = styled.div`
   align-items:center;
   width: -webkit-fill-available;
 `;
-const Wrapper = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-`;
 
-export default function ListDisplay({ list, setFollowedList, followedList }) {
-  
-  if (list.length === 0) return null;
-  
+const AddListDisplay = ({ list, followedList, setFollowedList }) => {
   const addListItem = (id, name) => {
-    const itemExists = find(followedList, i => i.id === id)
+    const itemExists = find(followedList, (i) => i.id === id);
     if (!itemExists) {
       const newList = [...followedList];
       newList.push({ id, name });
       setFollowedList(newList);
     }
   };
-
+  return (
+    <Container>
+      {list.map((item) => (
+        <ItemBtn
+          selected={find(followedList, (i) => i.id === item.id)}
+          key={item.id}
+          onClick={() => addListItem(item.id, item.name)}>
+          {item.name}
+          <FaPlus />
+        </ItemBtn>
+      ))}
+    </Container>
+  );
+};
+const RemoveListDisplay = ({ list, setFollowedList }) => {
   const removeListItem = (id) => {
-    const newList = [...followedList];
+    const newList = [...list];
     remove(newList, (item) => item.id === id);
     setFollowedList(newList);
-  }
+  };
   return (
-    <Wrapper>
-      <Container>
-        {list.map((item) => (
-          <ItemBtn
-            selected={find(followedList, (i) => i.id === item.id)}
-            key={item.id}
-            onClick={() => addListItem(item.id, item.name)}>
-            {item.name}
-            <FaPlus />
-          </ItemBtn>
-        ))}
-      </Container>
-      <Container>
-        {followedList.map((item) => (
-          <ItemBtn key={item.id} onClick={() => removeListItem(item.id)}>
-            {item.name}
-            <FaMinus />
-          </ItemBtn>
-        ))}
-      </Container>
-    </Wrapper>
+    <Container>
+      {list.map((item) => (
+        <ItemBtn key={item.id} onClick={() => removeListItem(item.id)}>
+          {item.name}
+          <FaMinus />
+        </ItemBtn>
+      ))}
+    </Container>
+  );
+};
+export default function ListDisplay({ list, setFollowedList, followedList, add }) {
+  if (list.length === 0) return null;
+  return (
+    <>
+      {add ? <AddListDisplay list={list} followedList={followedList} setFollowedList={setFollowedList} /> : <RemoveListDisplay list={followedList} setFollowedList={setFollowedList} />}
+    </>
   );
 }
