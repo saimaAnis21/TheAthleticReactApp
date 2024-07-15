@@ -25,8 +25,8 @@ const ItemBtn = styled.div`
   align-items:center;
   width: -webkit-fill-available;
 `;
-
-const AddListDisplay = ({ list, followedList, setFollowedList }) => {
+ 
+const AddListDisplay = ({ list, followedList, setFollowedList, addMutateFn }) => {
   const addListItem = (id, name) => {
     const itemExists = find(followedList, (i) => i.id === id);
     if (!itemExists) {
@@ -50,11 +50,13 @@ const AddListDisplay = ({ list, followedList, setFollowedList }) => {
   );
 };
 const RemoveListDisplay = ({ list, setFollowedList }) => {
+  if (list.length === 0) return null;
   const removeListItem = (id) => {
     const newList = [...list];
     remove(newList, (item) => item.id === id);
     setFollowedList(newList);
   };
+  
   return (
     <Container>
       {list.map((item) => (
@@ -70,7 +72,15 @@ export default function ListDisplay({ list, setFollowedList, followedList, add }
   if (list.length === 0) return null;
   return (
     <>
-      {add ? <AddListDisplay list={list} followedList={followedList} setFollowedList={setFollowedList} /> : <RemoveListDisplay list={followedList} setFollowedList={setFollowedList} />}
+      {add ? (
+        <AddListDisplay
+          list={list}
+          followedList={followedList}
+          setFollowedList={setFollowedList}
+        />
+      ) : (
+        <RemoveListDisplay list={followedList} setFollowedList={setFollowedList} />
+      )}
     </>
   );
 }

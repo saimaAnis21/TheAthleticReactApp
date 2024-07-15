@@ -1,8 +1,9 @@
 import { gql } from "apollo-boost";
-import { useQuery } from "@apollo/react-hooks";
-import React, { useState, useContext } from "react";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ListDisplay from "../components/ListDisplay";
+import { pick } from "lodash";
 
 const GET_TEAMS = gql`
   query {
@@ -24,7 +25,35 @@ query Leagues {
     name
   }
 }`;
-
+const GET_FOLLOWED_TEAMS = gql`
+  query Query {
+    followedTeams {
+      id
+      name
+    }
+  }
+`;
+const GET_FOLLOWED_LEAGUES = gql`
+query Query {
+  followedLeagues {
+    id
+    name
+  }
+}`;
+const ADD_TEAMS = gql`
+  mutation AddFollowedTeams($input: [AddArgs]) {
+    addFollowedTeams(input: $input) {
+      success
+    }
+  }
+`;
+const ADD_LEAGUES = gql`
+  mutation AddFollowedLeagues($input: [AddArgs]) {
+    addFollowedLeagues(input: $input) {
+      success
+    }
+  }
+`;
 const SelectBtn = styled.button`
   width: 50px;
   height: 20px;
@@ -36,8 +65,6 @@ const SelectBtn = styled.button`
   font-size: 1.5rem;
   font-weight: bolder;
 `;
-
-
 const Container = styled.div`
   display: flex;
   justify-content:center;
@@ -66,6 +93,12 @@ const WrapperBody = styled.div`
   display:flex;
   flex-direction:column;
 `;
+const ConfirmBtn = styled.button`
+  background: #000;
+  color: #fff;
+  padding: 10px;
+  cursor: pointer;
+`;
 const TeamListDisplay = (props) => <ListDisplay {...props} />
 const LeagueListDisplay = (props) => <ListDisplay {...props} />
 export default function SelectTeamsLeagues({
@@ -76,10 +109,31 @@ export default function SelectTeamsLeagues({
 }) {
   const { data: teamData, loading: teamLoading } = useQuery(GET_TEAMS);
   const { data: leagueData, loading: leagueLoading } = useQuery(GET_LEAGUES);
+  const { data: followedTeamData, loading: followedTeamLoading } = useQuery(GET_FOLLOWED_TEAMS);
+  const {
+    data: followedLeagueData,
+    loading: followedLeagueLoading,
+  } = useQuery(GET_FOLLOWED_LEAGUES);
+  const [addFollowedTeams] = useMutation(ADD_TEAMS, { variables: { input: followedTeams } });
+  const [addFollowedLeagues] = useMutation(ADD_LEAGUES, { variables: { input: followedLeagues } });
+   useEffect(() => {
+     (async () => {
+       const fTeamData = await followedTeamData?.followedTeams;
+       const ft = fTeamData?.map((i) => pick(i, ["id", "name"]));
+       setFollowedTeams(ft);
+     })();
+   }, [followedTeamData]);
+  useEffect(() => {
+    (async () => {
+      const fLeagData = await followedLeagueData?.followedLeagues;
+      const fl = fLeagData?.map((i) => pick(i, ["id", "name"]));
+      setFollowedLeagues(fl);
+    })();
+  }, [followedLeagueData]);
   const data = { ...teamData, ...leagueData };
 
   const [selectedOpt, setSelectedOpt] = useState("leagues");
-
+  
   const ListDisplayComps = {
     teams: ((props)=>
       <TeamListDisplay
@@ -98,9 +152,7 @@ export default function SelectTeamsLeagues({
       />
     ),
   };
-  
   const ListDisplayComp = ListDisplayComps[selectedOpt];
-
   return (
     <>
       <h1>Select Your Teams and Leagues</h1>
@@ -121,7 +173,15 @@ export default function SelectTeamsLeagues({
           </WrapperBody>
         </Wrapper>
         <Wrapper>
-          <WrapperHeader className="followed">{selectedOpt} you follow:</WrapperHeader>
+          <WrapperHeader className="followed">
+            {selectedOpt} you follow
+            <ConfirmBtn  onClick={addFollowedTeams}>
+              Confirm Teams Selected
+            </ConfirmBtn>
+            <ConfirmBtn  onClick={addFollowedLeagues}>
+              Confirm Leagues Selected
+            </ConfirmBtn>
+          </WrapperHeader>
           <WrapperBody>
             <ListDisplayComp add={false} />
           </WrapperBody>
