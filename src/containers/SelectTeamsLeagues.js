@@ -1,59 +1,10 @@
-import { gql } from "apollo-boost";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import ListDisplay from "../components/ListDisplay";
 import { pick } from "lodash";
+import { GET_TEAMS, GET_LEAGUES, GET_FOLLOWED_TEAMS, GET_FOLLOWED_LEAGUES, ADD_TEAMS, ADD_LEAGUES } from "../queries";
 
-const GET_TEAMS = gql`
-  query {
-    teams {
-      id
-      createdAt
-      name
-      league {
-        id
-        title
-      }
-    }
-  }
-`;
-const GET_LEAGUES = gql`
-query Leagues {
-  leagues {
-    id
-    name
-  }
-}`;
-const GET_FOLLOWED_TEAMS = gql`
-  query Query {
-    followedTeams {
-      id
-      name
-    }
-  }
-`;
-const GET_FOLLOWED_LEAGUES = gql`
-query Query {
-  followedLeagues {
-    id
-    name
-  }
-}`;
-const ADD_TEAMS = gql`
-  mutation AddFollowedTeams($input: [AddArgs]) {
-    addFollowedTeams(input: $input) {
-      success
-    }
-  }
-`;
-const ADD_LEAGUES = gql`
-  mutation AddFollowedLeagues($input: [AddArgs]) {
-    addFollowedLeagues(input: $input) {
-      success
-    }
-  }
-`;
 const SelectBtn = styled.button`
   width: 50px;
   height: 20px;
@@ -109,10 +60,11 @@ export default function SelectTeamsLeagues({
 }) {
   const { data: teamData, loading: teamLoading } = useQuery(GET_TEAMS);
   const { data: leagueData, loading: leagueLoading } = useQuery(GET_LEAGUES);
-  const { data: followedTeamData, loading: followedTeamLoading } = useQuery(GET_FOLLOWED_TEAMS);
+  const { data: followedTeamData, loading: followedTeamLoading, refetch: refetchFollowedTeams } = useQuery(GET_FOLLOWED_TEAMS);
   const {
     data: followedLeagueData,
     loading: followedLeagueLoading,
+    refetch: refetchFollowedLeagues,
   } = useQuery(GET_FOLLOWED_LEAGUES);
   const [addFollowedTeams] = useMutation(ADD_TEAMS, { variables: { input: followedTeams } });
   const [addFollowedLeagues] = useMutation(ADD_LEAGUES, { variables: { input: followedLeagues } });
@@ -175,10 +127,16 @@ export default function SelectTeamsLeagues({
         <Wrapper>
           <WrapperHeader className="followed">
             {selectedOpt} you follow
-            <ConfirmBtn  onClick={addFollowedTeams}>
+            <ConfirmBtn onClick={() => {
+              addFollowedTeams();
+              refetchFollowedTeams();
+            }}>
               Confirm Teams Selected
             </ConfirmBtn>
-            <ConfirmBtn  onClick={addFollowedLeagues}>
+            <ConfirmBtn onClick={() => {
+              addFollowedLeagues();
+              refetchFollowedLeagues();
+            }}>
               Confirm Leagues Selected
             </ConfirmBtn>
           </WrapperHeader>
