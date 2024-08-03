@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
-import { GET_PAGE_ARTICLES } from "../queries";
+import { GET_PAGE_ARTICLES, GET_FOLLOWED_TEAMS, GET_FOLLOWED_LEAGUES } from "../queries";
 
 const Img = styled.img`
 width:100%;
@@ -99,11 +99,15 @@ const ArticleDisplay = ({ articles, error }) => {
     </Container>
   );
 };
-export default function Articles({followedTeams, followedLeagues}) {
+export default function Articles() {
   const [pageNo, setPageNo] = useState(0);
   const PAGE_SIZE = 10;
-  const teamIds = followedTeams.map((i) => i.id);
-  const leagueIds = followedLeagues.map((i) => i.id);
+  const { data: followedTeamData } = useQuery(GET_FOLLOWED_TEAMS);
+  const { data: followedLeagueData } = useQuery(GET_FOLLOWED_LEAGUES);
+  
+  const teamIds = followedTeamData?.followedTeams.map((i) => i.id);
+  const leagueIds = followedLeagueData?.followedLeagues.map((i) => i.id);
+  
   const { data, loading, error } = useQuery(GET_PAGE_ARTICLES, {
     variables: {
       offset: pageNo*PAGE_SIZE,

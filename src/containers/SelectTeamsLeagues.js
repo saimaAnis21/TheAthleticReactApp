@@ -52,22 +52,21 @@ const ConfirmBtn = styled.button`
 `;
 const TeamListDisplay = (props) => <ListDisplay {...props} />
 const LeagueListDisplay = (props) => <ListDisplay {...props} />
-export default function SelectTeamsLeagues({
-  setFollowedLeagues,
-  setFollowedTeams,
-  followedTeams,
-  followedLeagues,
-}) {
+
+export default function SelectTeamsLeagues() {
+  const [followedTeams, setFollowedTeams] = useState([]);
+  const [followedLeagues, setFollowedLeagues] = useState([]);
+  const [selectedOpt, setSelectedOpt] = useState("leagues");
+
   const { data: teamData, loading: teamLoading } = useQuery(GET_TEAMS);
   const { data: leagueData, loading: leagueLoading } = useQuery(GET_LEAGUES);
-  const { data: followedTeamData, loading: followedTeamLoading, refetch: refetchFollowedTeams } = useQuery(GET_FOLLOWED_TEAMS);
-  const {
-    data: followedLeagueData,
-    loading: followedLeagueLoading,
-    refetch: refetchFollowedLeagues,
-  } = useQuery(GET_FOLLOWED_LEAGUES);
+
+  const { data: followedTeamData, refetch: refetchFollowedTeams } = useQuery(GET_FOLLOWED_TEAMS);
+  const { data: followedLeagueData, refetch: refetchFollowedLeagues } = useQuery(GET_FOLLOWED_LEAGUES);
+  
   const [addFollowedTeams] = useMutation(ADD_TEAMS, { variables: { input: followedTeams } });
   const [addFollowedLeagues] = useMutation(ADD_LEAGUES, { variables: { input: followedLeagues } });
+
    useEffect(() => {
      (async () => {
        const fTeamData = await followedTeamData?.followedTeams;
@@ -75,6 +74,7 @@ export default function SelectTeamsLeagues({
        setFollowedTeams(ft);
      })();
    }, [followedTeamData]);
+  
   useEffect(() => {
     (async () => {
       const fLeagData = await followedLeagueData?.followedLeagues;
@@ -82,10 +82,9 @@ export default function SelectTeamsLeagues({
       setFollowedLeagues(fl);
     })();
   }, [followedLeagueData]);
+  
   const data = { ...teamData, ...leagueData };
 
-  const [selectedOpt, setSelectedOpt] = useState("leagues");
-  
   const ListDisplayComps = {
     teams: ((props)=>
       <TeamListDisplay
