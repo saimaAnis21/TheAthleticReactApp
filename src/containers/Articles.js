@@ -1,26 +1,7 @@
 import React, {useState} from "react";
-import { gql } from "apollo-boost";
 import { useQuery } from "@apollo/react-hooks";
 import styled from "styled-components";
-
-const GET_PAGE_ARTICLES = gql`
-  query PageArticles($offset: Int, $limit: Int, $teamIds: [String!], $leagueIds: [String!]) {
-    pageArticles(offset: $offset, limit: $limit, teamIds: $teamIds, leagueIds: $leagueIds) {
-      article {
-        id
-        title
-        imageUrlString
-        createdAt
-        author {
-          name
-        }
-      }
-      pageInfo {
-        hasNextPage
-      }
-    }
-  }
-`;
+import { GET_PAGE_ARTICLES } from "../queries";
 
 const Img = styled.img`
 width:100%;

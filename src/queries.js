@@ -53,3 +53,22 @@ export const ADD_LEAGUES = gql`
     }
   }
 `;
+
+export const GET_PAGE_ARTICLES = gql`
+  query PageArticles($offset: Int, $limit: Int, $teamIds: [String!], $leagueIds: [String!]) {
+    pageArticles(offset: $offset, limit: $limit, teamIds: $teamIds, leagueIds: $leagueIds) {
+      article {
+        id
+        title
+        imageUrlString
+        createdAt
+        author {
+          name
+        }
+      }
+      pageInfo {
+        hasNextPage
+      }
+    }
+  }
+`;
