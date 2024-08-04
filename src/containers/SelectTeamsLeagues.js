@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import ListDisplay from "../components/ListDisplay";
+import {AddListDisplay, RemoveListDisplay} from "../components/ListDisplay";
 import { pick } from "lodash";
 import { GET_TEAMS, GET_LEAGUES, GET_FOLLOWED_TEAMS, GET_FOLLOWED_LEAGUES, ADD_TEAMS, ADD_LEAGUES } from "../queries";
 
@@ -50,8 +50,11 @@ const ConfirmBtn = styled.button`
   padding: 10px;
   cursor: pointer;
 `;
-const TeamListDisplay = (props) => <ListDisplay {...props} />
-const LeagueListDisplay = (props) => <ListDisplay {...props} />
+
+const TeamAddListDisplay = (props) => <AddListDisplay {...props} />
+const TeamRemoveListDisplay = (props) => <RemoveListDisplay {...props} />;
+const LeagueAddListDisplay = (props) => <AddListDisplay {...props} />;
+const LeagueRemoveListDisplay = (props) => <RemoveListDisplay {...props} />;
 
 export default function SelectTeamsLeagues() {
   const [followedTeams, setFollowedTeams] = useState([]);
@@ -82,28 +85,38 @@ export default function SelectTeamsLeagues() {
       setFollowedLeagues(fl);
     })();
   }, [followedLeagueData]);
-  
+
   const data = { ...teamData, ...leagueData };
 
-  const ListDisplayComps = {
-    teams: ((props)=>
-      <TeamListDisplay
+  const AddListDisplayComps = {
+    teams: (props) => (
+      <TeamAddListDisplay
         list={data?.[selectedOpt] || []}
         setFollowedList={setFollowedTeams}
         followedList={followedTeams}
-        {...props}
       />
     ),
-    leagues: ((props)=>
-      <LeagueListDisplay
+    leagues: (props) => (
+      <LeagueAddListDisplay
         list={data?.[selectedOpt] || []}
         setFollowedList={setFollowedLeagues}
         followedList={followedLeagues}
-        {...props}
       />
     ),
   };
-  const ListDisplayComp = ListDisplayComps[selectedOpt];
+  const RemoveListDisplayComps = {
+    teams: (props) => (
+      <TeamRemoveListDisplay followedList={followedTeams} setFollowedList={setFollowedTeams} />
+    ),
+    leagues: (props) => (
+      <LeagueRemoveListDisplay
+        followedList={followedLeagues}
+        setFollowedList={setFollowedLeagues}
+      />
+    ),
+  };
+  const AddLDComp = AddListDisplayComps[selectedOpt];
+  const RemoveLDComp = RemoveListDisplayComps[selectedOpt];
   return (
     <>
       <h1>Select Your Teams and Leagues</h1>
@@ -120,27 +133,29 @@ export default function SelectTeamsLeagues() {
             </SelectBtn>
           </WrapperHeader>
           <WrapperBody>
-            <ListDisplayComp add={true} />
+            <AddLDComp />
           </WrapperBody>
         </Wrapper>
         <Wrapper>
           <WrapperHeader className="followed">
             {selectedOpt} you follow
-            <ConfirmBtn onClick={() => {
-              addFollowedTeams();
-              refetchFollowedTeams();
-            }}>
+            <ConfirmBtn
+              onClick={() => {
+                addFollowedTeams();
+                refetchFollowedTeams();
+              }}>
               Confirm Teams Selected
             </ConfirmBtn>
-            <ConfirmBtn onClick={() => {
-              addFollowedLeagues();
-              refetchFollowedLeagues();
-            }}>
+            <ConfirmBtn
+              onClick={() => {
+                addFollowedLeagues();
+                refetchFollowedLeagues();
+              }}>
               Confirm Leagues Selected
             </ConfirmBtn>
           </WrapperHeader>
           <WrapperBody>
-            <ListDisplayComp add={false} />
+            <RemoveLDComp />
           </WrapperBody>
         </Wrapper>
       </Container>
