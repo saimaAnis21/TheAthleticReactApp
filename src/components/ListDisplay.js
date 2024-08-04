@@ -26,12 +26,18 @@ const ItemBtn = styled.div`
   width: -webkit-fill-available;
 `;
  
-export const AddListDisplay = ({ list, followedList, setFollowedList }) => {
+export const AddListDisplay = ({ list, followedList, setFollowedList, addMut, refetch }) => {
   const addListItem = (id, name) => {
     const itemExists = find(followedList, (i) => i.id === id);
     if (!itemExists) {
       const newList = [...followedList];
       newList.push({ id, name });
+      addMut({
+        variables: {
+          input: newList,
+        },
+      });
+      refetch();
       setFollowedList(newList);
     }
   };
@@ -49,11 +55,17 @@ export const AddListDisplay = ({ list, followedList, setFollowedList }) => {
     </Container>
   );
 };
-export const RemoveListDisplay = ({ followedList, setFollowedList }) => {
+export const RemoveListDisplay = ({ followedList, setFollowedList, addMut, refetch }) => {
   if (isEmpty(followedList)) return null;
   const removeListItem = (id) => {
     const newList = [...followedList];
     remove(newList, (item) => item.id === id);
+    addMut({
+      variables: {
+        input: newList,
+      },
+    });
+    refetch();
     setFollowedList(newList);
   };
 

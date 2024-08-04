@@ -44,12 +44,6 @@ const WrapperBody = styled.div`
   display:flex;
   flex-direction:column;
 `;
-const ConfirmBtn = styled.button`
-  background: #000;
-  color: #fff;
-  padding: 10px;
-  cursor: pointer;
-`;
 
 const TeamAddListDisplay = (props) => <AddListDisplay {...props} />
 const TeamRemoveListDisplay = (props) => <RemoveListDisplay {...props} />;
@@ -67,8 +61,8 @@ export default function SelectTeamsLeagues() {
   const { data: followedTeamData, refetch: refetchFollowedTeams } = useQuery(GET_FOLLOWED_TEAMS);
   const { data: followedLeagueData, refetch: refetchFollowedLeagues } = useQuery(GET_FOLLOWED_LEAGUES);
   
-  const [addFollowedTeams] = useMutation(ADD_TEAMS, { variables: { input: followedTeams } });
-  const [addFollowedLeagues] = useMutation(ADD_LEAGUES, { variables: { input: followedLeagues } });
+  const [addFollowedTeams] = useMutation(ADD_TEAMS);
+  const [addFollowedLeagues] = useMutation(ADD_LEAGUES);
 
    useEffect(() => {
      (async () => {
@@ -94,6 +88,8 @@ export default function SelectTeamsLeagues() {
         list={data?.[selectedOpt] || []}
         setFollowedList={setFollowedTeams}
         followedList={followedTeams}
+        addMut={addFollowedTeams}
+        refetch={refetchFollowedTeams}
       />
     ),
     leagues: (props) => (
@@ -101,17 +97,26 @@ export default function SelectTeamsLeagues() {
         list={data?.[selectedOpt] || []}
         setFollowedList={setFollowedLeagues}
         followedList={followedLeagues}
+        addMut={addFollowedLeagues}
+        refetch={refetchFollowedLeagues}
       />
     ),
   };
   const RemoveListDisplayComps = {
     teams: (props) => (
-      <TeamRemoveListDisplay followedList={followedTeams} setFollowedList={setFollowedTeams} />
+      <TeamRemoveListDisplay
+        followedList={followedTeams}
+        setFollowedList={setFollowedTeams}
+        addMut={addFollowedTeams}
+        refetch={refetchFollowedTeams}
+      />
     ),
     leagues: (props) => (
       <LeagueRemoveListDisplay
         followedList={followedLeagues}
         setFollowedList={setFollowedLeagues}
+        addMut={addFollowedLeagues}
+        refetch={refetchFollowedLeagues}
       />
     ),
   };
@@ -139,20 +144,6 @@ export default function SelectTeamsLeagues() {
         <Wrapper>
           <WrapperHeader className="followed">
             {selectedOpt} you follow
-            <ConfirmBtn
-              onClick={() => {
-                addFollowedTeams();
-                refetchFollowedTeams();
-              }}>
-              Confirm Teams Selected
-            </ConfirmBtn>
-            <ConfirmBtn
-              onClick={() => {
-                addFollowedLeagues();
-                refetchFollowedLeagues();
-              }}>
-              Confirm Leagues Selected
-            </ConfirmBtn>
           </WrapperHeader>
           <WrapperBody>
             <RemoveLDComp />
