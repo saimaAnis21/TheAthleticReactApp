@@ -1,9 +1,9 @@
 import { gql } from "apollo-boost";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import React, { useState, useEffect } from "react";
+import { pick } from "lodash";
 import styled from "styled-components";
 import ListDisplay from "../components/ListDisplay";
-import { pick } from "lodash";
 
 const GET_TEAMS = gql`
   query {
