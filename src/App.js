@@ -8,7 +8,7 @@ import { Routes, Route, Outlet } from "react-router-dom";
 import Articles from './containers/Articles';
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql/",
+  uri: process.env.REACT_APP_GQL_URL,
 });
 
 const Layout = () => (
