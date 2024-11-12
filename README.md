@@ -1,32 +1,46 @@
-# react-app
+# The Athletic React App
+# [Live Link]([https://the-athletic-graphql-server-217301ddd619.herokuapp.com/](https://the-athletic-react-app.vercel.app/))
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+"The Athletic React App", a web application where users can select their favourite teams and leagues and view news articles regarding them.
 
-## Requirements
+## Built With
+- Javascript
+- React
+- Styled components
+- Vercel
 
-Please refer to this [wireframe](https://www.figma.com/file/yyiYzehYnI7EAX1gsJhxaB/FS-take-home-challenge?type=design&node-id=0%3A1&mode=design&t=OJU51rs58mBmtjpZ-1) to get you started.
+## Getting Started
 
-## Available Scripts
+To get a local copy up and running follow these simple example steps.
 
-In the project directory, you can run:
+- Clone this project by typing ```git clone git@github.com:saimaAnis21/TheAthleticReactApp.git```
+- cd into the root directory
+- Run git pull origin main
+- Simply install the `node_modules` (I use yarn) and start the server (yarn start).
 
-### `yarn start`
+## Author
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+👤 **Saima**
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+**GitHub** [@saimaAnis21](https://github.com/saimaAnis21)
 
-### `yarn test`
+**LinkedIn** [Saima Anis](https://www.linkedin.com/in/saima-anis/)
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🤝 Contributing
 
-## GraphQL Client
+Contributions, issues, and feature requests are welcome!
 
-This app is pre-configured with an Apollo Client, pointing at http://localhost:4000/graphql which you ashould having running.
+## Show your support
 
-## Resources
+Give a ⭐️ if you like this project!
 
-Apollo Hooks: https://www.apollographql.com/docs/react/api/react-hooks
+## 📝 License
+
+Copyright 2020 Saima Anis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
