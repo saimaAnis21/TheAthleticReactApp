@@ -1,5 +1,5 @@
 # The Athletic React App
-# [Live Link]([[https://the-athletic-graphql-server-217301ddd619.herokuapp.com/](https://the-athletic-react-app.vercel.app/)](https://the-athletic-react-app.vercel.app/))
+# [Live Link](https://the-athletic-react-app.vercel.app/)
 
 "The Athletic React App", a web application where users can select their favourite teams and leagues and view news articles regarding them.
 
